@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ news.title }} | Новости</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="{% url 'index' %}" class="logo">НОВОСТИ</a>
+            <nav>
+                <a href="{% url 'index' %}">Главная</a>
+                <a href="{% url 'product' %}">Продукты</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="article-container">
+        <div class="article-actions">
+            <a href="{% url 'index' %}" class="back-button">Назад к новостям</a>
+            <a href="{% url 'edit_news' news.id %}" class="edit-button">Редактировать новость</a>
+            <a href="{% url 'delete_news' news.id %}" class="delete-button">Удалить новость</a>
+        </div>
+
+        <img src="{{ news.image.url }}" alt="{{ news.title }}" class="article-hero-image">
+
+        <div class="article-header">
+            <h1 class="article-title">{{ news.title }}</h1>
+            <div class="article-meta">
+                <span class="article-date">{{ news.created_at|date:"d M Y, H:i" }}</span>
+                <span class="article-divider"></span>
+                <span class="article-category">Новость</span>
+            </div>
+        </div>
+
+        <div class="article-divider-line"></div>
+
+        <article class="article-content">
+            <p class="article-text">{{ news.content|linebreaks }}</p>
+        </article>
+
+        <div class="article-divider-line"></div>
+    </main>
+
+    <footer>
+        <p>© 2025 Новости. Все права защищены.</p>
+    </footer>
+</body>
+</html>

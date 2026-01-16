@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать новость | Новости</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="{% url 'index' %}" class="logo">НОВОСТИ</a>
+            <nav>
+                <a href="{% url 'index' %}">Главная</a>
+                <a href="{% url 'product' %}">Продукты</a>
+            </nav>
+        </div>
+    </header>
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">Редактировать новость</h1>
+            <p class="form-subtitle">Заполните форму для публикации новой статьи</p>
+            <div class="form-divider"></div>
+        </div>
+
+        <form action="{% url 'edit_news' news.id %}" method="post" enctype="multipart/form-data" class="news-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_title" class="form-label">Заголовок</label>
+                <input 
+                    type="text" 
+                    id="id_title"
+                    name="title" 
+                    placeholder="Введите заголовок новости" 
+                    class="form-input"
+                    required
+                    value="{{ news.title }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="id_content" class="form-label">Содержание</label>
+                <textarea 
+                    id="id_content"
+                    name="content" 
+                    placeholder="Введите текст новости" 
+                    class="form-textarea"
+                    rows="8"
+                    required
+                    value="{{ news.content }}"
+                >{{ news.content }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="id_image" class="form-label">Изображение</label>
+                <div class="file-input-wrapper">
+                    <div class="current-image-wrapper">
+                        <p class="current-image-label">Текущее изображение:</p>
+                        <img src="{{ news.image.url }}" alt="{{ news.title }}" class="current-image-preview">
+                    </div>
+                    <div class="new-image-wrapper">
+                        <p class="new-image-label">Новое изображение (необязательно):</p>
+                        <input 
+                            type="file" 
+                            id="id_image"
+                            name="image" 
+                            accept="image/*"
+                            class="form-file-input"
+                        >
+                        <label for="id_image" class="file-input-label">
+                            <span class="file-input-icon">📷</span>
+                            <span class="file-input-text">Выберите новое изображение</span>
+                            <span class="file-input-name"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="form-submit-btn">
+                    <span>Редактировать новость</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+                <a href="{% url 'index' %}" class="form-cancel-btn">Отмена</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Отображение имени выбранного файла и предпросмотр
+        const fileInput = document.getElementById('id_image');
+        const fileNameSpan = document.querySelector('.file-input-name');
+        const fileTextSpan = document.querySelector('.file-input-text');
+        const currentImagePreview = document.querySelector('.current-image-preview');
+
+        fileInput.addEventListener('change', function(e) {
+            if (this.files && this.files.length > 0) {
+                const file = this.files[0];
+                const fileName = file.name;
+                fileNameSpan.textContent = fileName;
+                fileNameSpan.style.display = 'block';
+                fileTextSpan.style.display = 'none';
+                
+                // Предпросмотр нового изображения
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImagePreview.src = e.target.result;
+                    currentImagePreview.style.border = '2px solid #f4a261';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileNameSpan.style.display = 'none';
+                fileTextSpan.style.display = 'block';
+                // Возвращаем оригинальное изображение
+                if (currentImagePreview) {
+                    currentImagePreview.src = currentImagePreview.dataset.original || currentImagePreview.src;
+                    currentImagePreview.style.border = 'none';
+                }
+            }
+        });
+        
+        // Сохраняем оригинальный src изображения
+        if (currentImagePreview) {
+            currentImagePreview.dataset.original = currentImagePreview.src;
+        }
+    </script>
+</body>
+</html>
